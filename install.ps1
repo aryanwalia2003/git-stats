@@ -28,7 +28,16 @@ if ($userPath -notmatch [regex]::Escape($INSTALL_DIR)) {
     Write-Host "[Configuring] Adding $INSTALL_DIR to your User PATH..." -ForegroundColor Cyan
     $newPath = $userPath + ";" + $INSTALL_DIR
     [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    Write-Host "[Notice] PATH updated! You may need to restart your terminal (or open a new tab) for the command to be recognized." -ForegroundColor Yellow
+    
+    # Also update the current session's PATH so it works immediately
+    $env:PATH += ";$INSTALL_DIR"
+    
+    Write-Host "[Notice] PATH updated successfully." -ForegroundColor Yellow
+} else {
+    # It's already in the registry, but ensure it's in the current session
+    if ($env:PATH -notmatch [regex]::Escape($INSTALL_DIR)) {
+        $env:PATH += ";$INSTALL_DIR"
+    }
 }
 
 Write-Host "[Success] You can now run 'gh-stats' in any git repository." -ForegroundColor Green

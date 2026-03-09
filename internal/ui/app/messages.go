@@ -8,6 +8,8 @@ type StatsLoadedMsg struct {
 	Commits      []domain.Stat // recent commits with author + date
 	Churn        []domain.Stat // lines added/deleted per commit
 	History      []domain.Stat // full commit history for timeline
+	Merges       []domain.Stat // branch merge history
+	Files        []domain.Stat // file modification frequencies
 }
 
 // StatsErrorMsg is sent when fetching stats fails.

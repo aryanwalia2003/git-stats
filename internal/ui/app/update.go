@@ -27,7 +27,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case StatsLoadedMsg:
 		m.Loading = false
-		m.Contributors, m.Commits, m.Churn, m.History = msg.Contributors, msg.Commits, msg.Churn, msg.History
+		m.Contributors, m.Commits, m.Churn = msg.Contributors, msg.Commits, msg.Churn
+		m.History, m.Merges = msg.History, msg.Merges
+		m.Files = msg.Files
 		if m.Ready {
 			m.Viewport.SetContent(m.renderDashboard())
 		}

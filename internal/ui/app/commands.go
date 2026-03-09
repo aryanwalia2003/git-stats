@@ -29,11 +29,23 @@ func fetchStats(reader domain.LocalGitReader) tea.Cmd {
 			return StatsErrorMsg{Err: err}
 		}
 
+		merges, err := reader.GetMergeHistory()
+		if err != nil {
+			return StatsErrorMsg{Err: err}
+		}
+
+		files, err := reader.GetFileFrequencies()
+		if err != nil {
+			return StatsErrorMsg{Err: err}
+		}
+
 		return StatsLoadedMsg{
 			Contributors: contributors,
 			Commits:      commits,
 			Churn:        churn,
 			History:      history,
+			Merges:       merges,
+			Files:        files,
 		}
 	}
 }

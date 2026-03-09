@@ -2,33 +2,31 @@ package app
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/aryanwalia2003/git-stats/internal/ui/theme"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // renderActivityPanel builds the "Commit Activity" sparkline panel.
 func renderActivityPanel(m Model) string {
 	title := theme.PanelTitleStyle.Render("📈 Commit Activity")
 
-	// Fetch more commits for a better graph (use all available)
-	dates, counts := groupCommitsByDate(m.Commits)
+	// We want to show exactly the last 6 months in distinct blocks
+	blocks := computeMonthlyBlocks(m.History, 6)
 
-	if len(counts) == 0 {
-		return theme.PanelStyle.Render(title + "\n  No commits found")
+	if len(blocks) == 0 {
+		return theme.FullWidthPanelStyle.Render(title + "\n  No commits found")
 	}
 
-	// Build sparkline from daily counts
-	spark := renderSparkline(counts)
+	calendar := renderMonthBlocks(blocks)
 
-	// Show date labels below: first and last date
-	firstDate := dates[0]
-	lastDate := dates[len(dates)-1]
-	dateRange := fmt.Sprintf("  %s %s %s",
-		theme.SubtleStyle.Render(lastDate),
-		strings.Repeat(" ", len(counts)),
-		theme.SubtleStyle.Render(firstDate))
+	legend := fmt.Sprintf("    Less %s %s %s %s %s More",
+		lipgloss.NewStyle().Foreground(theme.CalendarColors[0]).Render("■"),
+		lipgloss.NewStyle().Foreground(theme.CalendarColors[1]).Render("■"),
+		lipgloss.NewStyle().Foreground(theme.CalendarColors[2]).Render("■"),
+		lipgloss.NewStyle().Foreground(theme.CalendarColors[3]).Render("■"),
+		lipgloss.NewStyle().Foreground(theme.CalendarColors[4]).Render("■"))
 
-	body := fmt.Sprintf("  %s\n%s", spark, dateRange)
-	return theme.PanelStyle.Render(title + "\n" + body)
+	body := fmt.Sprintf("\n%s\n%s", calendar, legend)
+	return theme.FullWidthPanelStyle.Render(title + body)
 }

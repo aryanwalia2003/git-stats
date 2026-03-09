@@ -18,6 +18,8 @@ type Model struct {
 	Commits      []domain.Stat // recent commits
 	Churn        []domain.Stat // lines added/deleted
 	History      []domain.Stat // full history for timeline
+	Merges       []domain.Stat // branch merge history
+	Files        []domain.Stat // file modification frequencies
 	ErrMsg       string        // error message if stats fail
 }
 

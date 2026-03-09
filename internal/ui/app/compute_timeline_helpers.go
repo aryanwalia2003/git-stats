@@ -42,6 +42,14 @@ func findLongestGap(history []domain.Stat) TimelineEvent {
 		}
 	}
 
+	// Also check the gap between the MOST RECENT commit and NOW
+	newestDate, _ := time.Parse(time.RFC3339, history[0].Date)
+	gapToNow := time.Now().Sub(newestDate)
+	if gapToNow > maxGap {
+		maxGap = gapToNow
+		gapEnd = time.Now()
+	}
+
 	days := int(maxGap.Hours() / 24)
 	if days < 7 {
 		return TimelineEvent{} // Only report gaps longer than a week
