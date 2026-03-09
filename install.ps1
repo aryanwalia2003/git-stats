@@ -9,7 +9,7 @@ $INSTALL_DIR = "$env:LOCALAPPDATA\gh-stats\bin"
 
 # Check if binary exists in the current directory
 if (-not (Test-Path $BINARY_PATH)) {
-    Write-Host "❌ Could not find $BINARY_PATH. Please run this script from the unzipped directory." -ForegroundColor Red
+    Write-Host "[Error] Could not find $BINARY_PATH. Please run this script from the unzipped directory." -ForegroundColor Red
     Exit
 }
 
@@ -19,16 +19,16 @@ if (-not (Test-Path $INSTALL_DIR)) {
 }
 
 # Copy the binary to the installation folder
-Write-Host "🚀 Installing $EXECUTABLE_NAME to $INSTALL_DIR..." -ForegroundColor Cyan
+Write-Host "[Installing] $EXECUTABLE_NAME to $INSTALL_DIR..." -ForegroundColor Cyan
 Copy-Item -Path $BINARY_PATH -Destination "$INSTALL_DIR\$EXECUTABLE_NAME" -Force
 
 # Add the installation folder to the User PATH if it's not already there
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notmatch [regex]::Escape($INSTALL_DIR)) {
-    Write-Host "🔗 Adding $INSTALL_DIR to your User PATH..." -ForegroundColor Cyan
+    Write-Host "[Configuring] Adding $INSTALL_DIR to your User PATH..." -ForegroundColor Cyan
     $newPath = $userPath + ";" + $INSTALL_DIR
     [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    Write-Host "⚠️ PATH updated! You may need to restart your terminal (or open a new tab) for the command to be recognized." -ForegroundColor Yellow
+    Write-Host "[Notice] PATH updated! You may need to restart your terminal (or open a new tab) for the command to be recognized." -ForegroundColor Yellow
 }
 
-Write-Host "✅ Success! You can now run 'gh-stats' in any git repository." -ForegroundColor Green
+Write-Host "[Success] You can now run 'gh-stats' in any git repository." -ForegroundColor Green
