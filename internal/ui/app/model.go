@@ -1,19 +1,34 @@
-package app // this file sis part of the app package
+package app
 
-import "github.com/charmbracelet/bubbles/spinner" 
+import (
+	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/bubbles/viewport"
+	"github.com/aryanwalia2003/git-stats/internal/domain"
+)
 
-// Model holds the application state.
+// Model holds the entire application state.
 type Model struct {
-	RepoName string
-	Loading  bool
-	Spinner  spinner.Model
-} // yeh state hai , where we have a reponame , loading which is a bool, and a spinner
+	RepoName     string
+	Loading      bool
+	Ready        bool // true when viewport is sized
+	Spinner      spinner.Model
+	Viewport     viewport.Model
+	Reader       domain.LocalGitReader
+	Contributors []domain.Stat // top committers
+	Commits      []domain.Stat // recent commits
+	Churn        []domain.Stat // lines added/deleted
+	History      []domain.Stat // full history for timeline
+	ErrMsg       string        // error message if stats fail
+}
 
-// New creates a default application state.
-func New(name string) Model {
+// New creates a default application state with the reader wired in.
+func New(name string, reader domain.LocalGitReader) Model {
+	s := spinner.New()
+	s.Spinner = spinner.Dot // animated dot spinner style
 	return Model{
 		RepoName: name,
 		Loading:  true,
-		Spinner:  spinner.New(),
+		Spinner:  s,
+		Reader:   reader,
 	}
-} //new model ke liye sirf ek name pass karna hai just for the repo uske loading ki value default true hai and spinner toh external package hai 
+}

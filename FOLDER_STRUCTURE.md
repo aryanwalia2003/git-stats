@@ -1,71 +1,130 @@
-# Project Folder Structure Guide (GitHub Stats TUI)
+# 📂 Project Folder Structure Guide
 
-Yeh guide humare 30-line constraint manifesto par based hai. Harr ek folder ki ek specific responsibility (Single Responsibility Principle) hai. Yahan detail mein diya gaya hai ki kis folder mein kya jayega.
-
-## Folder Breakdown
-
-### 1. `cmd/`
-**Kya jayega:** Application ka main entrypoint.
-**Example file:** `cmd/gh-stats/main.go`
-**Rule:** Isme sirff basic setup, configuration load aur Bubble Tea program initialization hona chahiye. Koi business logic ya UI drawing yahan nahi hogi.
-
-### 2. `internal/domain/`
-**Kya jayega:** **Source of Truth**. Yahan sirff Interfaces aur pure Data Structures (Entities) aayenge. Is package mein koi external dependency nahi honi chahiye (No DB, no UI).
-**Example file:** `internal/domain/user.go`
-**Dikhne mein kaisa hoga:**
-```go
-package domain
-
-// Entity
-type User struct {
-    ID    string
-    Login string
-}
-
-// Interface
-type UserRepository interface {
-    GetUser(id string) (*User, error)
-}
-```
-
-### 3. `internal/db/`
-**Kya jayega:** SQLite queries aur database interactions jo `domain` package mein bani interfaces ko satisfy karti hain.
-**Example file:** `internal/db/stars.go`
-**Rule:** Complex ORM avoid karo, raw SQL strings use karo. Agar join bahut bada ho raha hai, toh SQL Views bana lo DB mein thake Go files clean rahein. File length 30 lines ke andar rakhne ke liye chhote repository files banao.
-
-### 4. `internal/api/`
-**Kya jayega:** External HTTP requests aur GitHub API se baat karne wala code. Ye functions data fetch karke `tea.Cmd` return karenge taaki network requests completely asynchronous rahen aur UI freeze na ho.
-**Example file:** `internal/api/fetch_commits.go`
-
-### 5. `internal/ui/`
-**Kya jayega:** TUI Components aur Bubble Tea model layer. UI ek large monolith model banne ki jagah "Compositions of Sub-Models" hona chahiye. 
-**Sub-folders:**
-- `internal/ui/header/`: Header UI ka apna model, update, view structure.
-- `internal/ui/sidebar/`: Sidebar logic ke liye independent files.
-**Example file:** `internal/ui/sidebar/view.go`
-**Rule:** Main application loop sirf in chhote sub-models ko messages delegate (pass) karega.
-- `internal/ui/app/`: Root application shell jo saare sub-models (Header, Sidebar, Views) ko coordinate aur compose karta hai.
-**Example file:** `internal/ui/app/model.go`
-**Rule:** Isme business logic nahi hogi, sirf sub-models ko messages pass karna aur layout build karna iska kaam hai.```
-
-### 6. `internal/ui/theme/`
-**Kya jayega:** Sirf Design, Layout aur Colors! Saari LipGloss styling yahan hogi taaki `internal/ui` elements clean rahen aur HTML ki tarah CSS styles alag rahen.
-**Example file:** `internal/ui/theme/buttons.go` aur `internal/ui/theme/colors.go`
-
-### 7. `internal/transform/` ya `pkg/utils/`
-**Kya jayega:** "Stateless Helper Pattern" i.e., Pure functions jinme koi side effect nahi hota.
-Time ago strings banane ka logic, Data formatting, numbers ko format karna aadi idhar rahenge kyuki inme error ya logic test karna aasaan rehta hai.
-**Example file:** `pkg/utils/timeline.go` 
-**Dikhne mein kaisa hoga:** `func CalculateGrowthPercentage(oldVal, newVal int) float64`
-
-### 8. `internal/errors/`
-**Kya jayega:** Custom error types aur sentinel errors taaki app code mein har jagah flat error-handling ho (Guard clauses).
-**Example file:** `internal/errors/sentinel.go`
+Yeh ek **Lazygit-style TUI** hai jo kisi bhi git repo ke andar chala kar uski stats dikhata hai.
+Humare architecture ka rule hai: **Har file 30 lines se kam**, har folder ki **ek specific responsibility**.
 
 ---
 
-### Golden Rules (File likhte waqt):
-1. **File Limit (30 Lines):** Try your best to keep files under 30 lines. Agar code 30 lines cross kar raha hai, toh ek naya helper function nikalo doosri file mein.
-2. **Narrative Naming:** Variables ka naam clearly poora rakhna hai (e.g., `githubApiResponse` not `res`, `repositoryGlobalID` not `id`), taaki code hi documentation ban jaaye.
-3. **Guard Clauses:** `if err != nil` se error jaldi return karao aur nested `else` statements avoid karo.
-4. **Absolute Imports:** Import ke liye hamesha apne package ka absolute path use karo (e.g. `github.com/aryanwalia/gh-stats/internal/domain`), relative `../../` paths allow nahi karne hai.
+## File Naming Convention (Sabse Zaroori!)
+
+Har file ka naam **3 cheezein** batata hai: **Kis struct ka hai** → **Kya topic hai** → **Kis type ka code hai**
+
+| Suffix | Matlab | Example |
+|---|---|---|
+| `_struct.go` | Struct definition + constructor | `reader_struct.go` |
+| `_method.go` | Kisi struct ka method | `reader_repo_method.go` |
+| `_iface.go` | Interface definition | `git_reader_iface.go` |
+| `_entity.go` | Pure data struct (no logic) | `repo_entity.go` |
+| `_helper.go` | Shared utility function | `run_helper.go` |
+| `_init.go` | Initialization / setup code | `db_init.go` |
+| `_schema.go` | SQL table definitions | `migrations_schema.go` |
+| `_style.go` | LipGloss styling constants | `colors_style.go` |
+| `parse_*.go` | Stateless parser function | `parse_origin_url.go` |
+
+---
+
+## Folder Breakdown
+
+### 1. `cmd/gh-stats/`
+> App ka main entrypoint. Sirf wiring: DB connect karo, Reader banao, Bubble Tea start karo. **Zero business logic.**
+
+```
+cmd/gh-stats/
+└── main.go
+```
+
+### 2. `internal/domain/`
+> **Source of Truth.** Sirf Interfaces aur Data Structures. Koi external dependency nahi (no DB, no UI, no API).
+> Baaki saare packages (db, git, api) in interfaces ko "satisfy" karte hain.
+
+```
+internal/domain/
+├── repo_entity.go            ← Repo struct (LocalPath, Owner, Name, Branch...)
+├── stat_entity.go            ← Stat struct (Label, Value, Date...)
+├── git_reader_iface.go       ← LocalGitReader interface (GetCurrentRepo, GetRecentCommits...)
+└── github_reader_iface.go    ← GitHubReader interface (GetTraffic, GetStargazers...)
+```
+
+**Example** — `repo_entity.go`:
+```go
+package domain
+
+type Repo struct {
+    LocalPath    string
+    RemoteOrigin string
+    Name         string
+    Owner        string
+    Branch       string
+}
+```
+
+### 3. `internal/git/`
+> Local `.git` folder se data parse karta hai. `domain.LocalGitReader` interface implement karta hai.
+> `reader_*` files = Reader struct ke methods. `parse_*` files = standalone parser functions.
+
+```
+internal/git/
+├── reader_struct.go                ← Reader struct + NewReader() constructor
+├── reader_repo_method.go           ← GetCurrentRepo()  — remote origin & branch padhta hai
+├── reader_commits_method.go        ← GetRecentCommits() — git log parse karta hai
+├── reader_contributors_method.go   ← GetLocalContributors() — git shortlog se top authors
+├── reader_churn_method.go          ← GetCodeChurn() — lines added/deleted per commit
+├── run_helper.go                   ← runGit() — shared helper jo git commands execute karta hai
+├── parse_origin_url.go             ← remote URL se owner/name nikalta hai
+├── parse_contributors.go           ← shortlog output ko Stat[] mein convert karta hai
+├── parse_commits.go                ← git log output ko Stat[] mein convert karta hai
+└── parse_churn.go                  ← shortstat output se insertions/deletions nikalta hai
+```
+
+### 4. `internal/db/`
+> SQLite database layer. GitHub API ka cached data store karta hai (Stars, Forks snapshots) aur AI insights cache karta hai.
+> Local git data yahan NAHI aata — woh seedha `.git` se on-the-fly parse hota hai.
+
+```
+internal/db/
+├── db_init.go              ← SQLite connection setup + migrations call
+└── migrations_schema.go    ← SQL CREATE TABLE statements (repo_snapshots, ai_insights)
+```
+
+**Tables:**
+- `repo_snapshots` — GitHub API se aaye Stars/Forks/Issues ka daily snapshot
+- `ai_insights` — LLM-generated timeline events ka cache ("The Major Refactor")
+
+### 5. `internal/api/`
+> GitHub API se remote stats fetch karta hai (Stars, Traffic, Issues). `domain.GitHubReader` implement karega.
+> Har request `tea.Cmd` return karegi taaki UI freeze na ho.
+
+```
+internal/api/
+├── client_struct.go        ← (future) HTTP client + auth setup
+├── client_traffic_method.go ← (future) GetTraffic()
+└── client_stars_method.go  ← (future) GetStargazers()
+```
+
+### 6. `internal/ui/`
+> Bubble Tea TUI components. Har UI section apna independent sub-model hai.
+
+```
+internal/ui/
+├── app/                    ← Root orchestrator (delegates to sub-models)
+│   ├── model.go
+│   ├── update.go
+│   └── view.go
+├── header/                 ← (future) Header bar component
+├── sidebar/                ← (future) Navigation panel
+├── stats/                  ← (future) Main stats dashboard view
+└── theme/
+    └── colors_style.go     ← LipGloss colors, fonts, layouts (CSS jaisa)
+```
+
+**Rule:** `app/` mein koi business logic nahi — sirf sub-models ko messages forward karna aur layout banana.
+
+---
+
+## ⚡ Golden Rules
+
+1. **30 Lines Max:** File 30 lines cross kare → naya helper function alag file mein nikalo
+2. **Struct naam file mein:** `reader_repo_method.go` = Reader struct ka Repo method
+3. **Narrative Naming:** `githubApiResponse` likho, `res` mat likho
+4. **Guard Clauses:** `if err != nil { return }` jaldi likho, nested else avoid karo
+5. **Absolute Imports:** `github.com/aryanwalia2003/git-stats/internal/domain` use karo, `../../` kabhi nahi

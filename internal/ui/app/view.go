@@ -1,21 +1,24 @@
-package app //yeh file app package ka part hai , go mein packages ko logically group karte hain
+package app
 
 import (
-	"fmt" //fmt printf , sprintf ke liye use  hota hai standard package hai
-	"github.com/aryanwalia2003/gh-stats/internal/ui/theme"
+	"fmt"
+	"github.com/aryanwalia2003/git-stats/internal/ui/theme"
 )
 
-// View renders the current state as a string.
+// View renders the root application UI state.
 func (m Model) View() string {
-	
-	if m.Loading { //checks if app abhi data load kar rha hai yaan nhi 
-		return fmt.Sprintf("%s Fetching %s...", 
-            m.Spinner.View(), 
-            m.RepoName)
+	if m.ErrMsg != "" {
+		return fmt.Sprintf("\n  ❌ Error: %s\n", m.ErrMsg)
+	}
+	if m.Loading {
+		return fmt.Sprintf("\n  %s Fetching stats for %s...\n",
+			m.Spinner.View(),
+			theme.TitleStyle.Render(m.RepoName))
+	}
+	if !m.Ready {
+		return "\n  Initializing viewport...\n"
 	}
 
-	return theme.TitleStyle.Render("Stats for " + m.RepoName)
+	// Render the scrollable viewport!
+	return m.Viewport.View()
 }
-
-
-//basically chm ek state hai , check karo if m is still loading if it is so , then show a spinner icon and write a string saying fetching string for the repo blah , agar loading nhi hai toh do show the string stats for the rep 

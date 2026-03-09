@@ -7,8 +7,8 @@ import "github.com/aryanwalia2003/git-stats/internal/domain"
 func (r *Reader) GetCodeChurn() ([]domain.Stat, error) {
 	// --shortstat gives us a summary line after each commit like:
 	//   "3 files changed, 42 insertions(+), 10 deletions(-)"
-	// --format="" suppresses the normal commit info so we only get stats
-	output, err := r.runGit("log", "--shortstat", "--format=commit:%h|%an")
+	// --format="commit:%h|%an|%aI|%s" gives hash, author, date, message
+	output, err := r.runGit("log", "--shortstat", "--format=commit:%h|%an|%aI|%s")
 	if err != nil {
 		return nil, err
 	}
