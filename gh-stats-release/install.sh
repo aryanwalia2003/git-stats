@@ -10,10 +10,10 @@ ARCH="$(uname -m)"
 
 # Select the correct binary based on OS and architecture
 if [ "$OS" = "darwin" ]; then
-    # For macOS, we provide the intel binary which runs on all modern Macs via Rosetta 2
-    BINARY="bin/gh-stats-mac-intel"
+	    # For macOS, we provide the intel binary which runs on all modern Macs via Rosetta 2
+    BINARY="./gh-stats-darwin-amd64"
 elif [ "$OS" = "linux" ]; then
-    BINARY="bin/gh-stats-linux"
+    BINARY="./gh-stats-linux-amd64"
 else
     echo "❌ Unsupported OS: $OS. Please install manually."
     exit 1

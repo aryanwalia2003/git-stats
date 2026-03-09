@@ -2,7 +2,7 @@
 
 $ErrorActionPreference = "Stop"
 $EXECUTABLE_NAME = "gh-stats.exe"
-$BINARY_PATH = ".\bin\gh-stats-windows.exe"
+$BINARY_PATH = ".\gh-stats-windows-amd64.exe"
 
 # Define the user's local AppData installation path
 $INSTALL_DIR = "$env:LOCALAPPDATA\gh-stats\bin"
