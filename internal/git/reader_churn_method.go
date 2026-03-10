@@ -8,7 +8,7 @@ func (r *Reader) GetCodeChurn() ([]domain.Stat, error) {
 	// --shortstat gives us a summary line after each commit like:
 	//   "3 files changed, 42 insertions(+), 10 deletions(-)"
 	// --format="commit:%h|%an|%aI|%s" gives hash, author, date, message
-	output, err := r.runGit("log", "--shortstat", "--format=commit:%h|%an|%aI|%s")
+	output, err := r.runGit("log", "--all", "--shortstat", "--format=commit:%h|%an|%aI|%s")
 	if err != nil {
 		return nil, err
 	}

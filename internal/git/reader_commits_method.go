@@ -18,7 +18,7 @@ func (r *Reader) GetRecentCommits(limit int) ([]domain.Stat, error) {
 	//   %s  = commit subject/message (e.g., "added login feature")
 	maxCount := fmt.Sprintf("--max-count=%d", limit) 
 
-	output, err := r.runGit("log", maxCount, "--format=%h|%an|%aI|%s")
+	output, err := r.runGit("log", "--all", maxCount, "--format=%h|%an|%aI|%s")
 	if err != nil {
 		return nil, err
 	}

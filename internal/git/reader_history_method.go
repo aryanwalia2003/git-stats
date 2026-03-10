@@ -7,7 +7,7 @@ import "github.com/aryanwalia2003/git-stats/internal/domain"
 func (r *Reader) GetCommitHistory() ([]domain.Stat, error) {
 	// No --max-count here, we want everything.
 	// %h=hash, %an=author, %aI=date, %s=subject
-	output, err := r.runGit("log", "--format=%h|%an|%aI|%s")
+	output, err := r.runGit("log", "--all", "--format=%h|%an|%aI|%s")
 	if err != nil {
 		return nil, err
 	}
