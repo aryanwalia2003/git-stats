@@ -21,15 +21,16 @@ func renderDynamicsPanel(m Model) string {
 	}
 
 	for _, lc := range lifecycles {
-		name := theme.ValueStyle.Render(lc.Name)
+		name := theme.LabelStyle.Render(lc.Name)
 		joined := theme.SubtleStyle.Render(fmt.Sprintf("Joined %s", lc.JoinDate))
 		
-		status := "🟢 Active"
+		status := theme.BarStyle.Render("🟢 Active")
 		if lc.LeftDate != "" {
 			status = theme.SubtleStyle.Render(fmt.Sprintf("💤 Sabbatical since %s", lc.LeftDate))
 		}
 		
-		body.WriteString(fmt.Sprintf("  %s %s\n    └─ %s\n", name, status, joined))
+		// 1 space for padding, name, status. The L-bracket aligns under the name.
+		body.WriteString(fmt.Sprintf(" %s %s\n   └─ %s\n", name, status, joined))
 	}
 
 	return title + "\n" + body.String()

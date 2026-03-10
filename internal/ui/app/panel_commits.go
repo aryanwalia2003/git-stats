@@ -23,13 +23,14 @@ func renderCommitsPanel(m Model) string {
 			msg = msg[:27] + "..." // Truncate so it fits the panel
 		}
 
-		line := fmt.Sprintf("  %s %s %s\n    └─ %s",
+		// Metadata is dim, Message is bright/primary content
+		line := fmt.Sprintf(" %s %s %s\n   └─ %s",
 			theme.SubtleStyle.Render(c.RepoID),    // short hash
-			theme.LabelStyle.Render(c.Label),      // author name
-			theme.SubtleStyle.Render(c.Date[:10]), // just the date part
-			theme.SubtleStyle.Render(msg))         // truncated commit message
+			theme.SubtleStyle.Render(c.Date[:10]), // date first
+			theme.SubtleStyle.Render(c.Label),     // author name dimmed
+			theme.ValueStyle.Render(msg))          // message pops
 		body += line + "\n"
 	}
 
-	return title + "\n" + body
+	return title + "\n\n" + body
 }

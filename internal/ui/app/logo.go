@@ -19,6 +19,6 @@ func GithubLogo() string {
 	return lipgloss.NewStyle().
 		Foreground(theme.Primary).
 		Bold(true).
-		MarginBottom(1).
+		Margin(1, 0, 2, 0). // Top, Right, Bottom, Left margin
 		Render(logo)
 }

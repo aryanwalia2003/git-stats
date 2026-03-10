@@ -34,10 +34,16 @@ func renderBarChart(labels []string, values []int, maxWidth int) string {
 		if barLen == 0 && values[i] > 0 {
 			barLen = 1 // at least 1 block for non-zero values
 		}
-		bar := theme.ValueStyle.Render(strings.Repeat("█", barLen))
-		count := theme.SubtleStyle.Render(fmt.Sprintf(" %d", values[i]))
-		name := theme.LabelStyle.Render(fmt.Sprintf("%-16s", label))
-		lines = append(lines, fmt.Sprintf("  %s %s%s", name, bar, count))
+		
+		// Use BarStyle for chart bars instead of ValueStyle
+		bar := theme.BarStyle.Render(strings.Repeat("█", barLen))
+		count := theme.ValueStyle.Render(fmt.Sprintf("%d", values[i]))
+		
+		// Ensure labels are strictly 18 chars wide for perfect alignment of bars and numbers
+		name := theme.LabelStyle.Render(fmt.Sprintf("%-18s", label))
+		
+		// Add subtle leading whitespace, then fixed-width name, then bar, then padded value
+		lines = append(lines, fmt.Sprintf(" %s %s %s", name, bar, count))
 	}
 	return strings.Join(lines, "\n")
 }

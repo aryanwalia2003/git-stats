@@ -20,25 +20,37 @@ func renderVibesPanel(m Model) string {
 	topEmoji, emojiCount := computeTopEmoji(m.Commits)
 	caffeineActive, caffeineBurst := computeCaffeineMode(m.Commits)
 
-	lines := fmt.Sprintf("  🌙 Night Owl:       %s\n", theme.ValueStyle.Render(fmt.Sprintf("%.0f%%", nightOwl)))
-	lines += fmt.Sprintf("  ⚔️  Weekend Warrior: %s\n", theme.ValueStyle.Render(fmt.Sprintf("%.0f%%", weekend)))
-	lines += fmt.Sprintf("  🗓️  Busiest:         %s at %s\n",
+	// Pad labels to 18 characters to perfectly align the values column
+	lines := fmt.Sprintf(" %s %s %.0f%%\n", theme.LabelStyle.Render(fmt.Sprintf("%-18s", "🌙 Night Owl:")), renderProgressBar(nightOwl, 10, theme.CalendarColors[3]), nightOwl)
+	lines += fmt.Sprintf(" %s %s %.0f%%\n\n", theme.LabelStyle.Render(fmt.Sprintf("%-18s", "⚔️  Weekend Warrior:")), renderProgressBar(weekend, 10, theme.CalendarColors[4]), weekend)
+	
+	lines += fmt.Sprintf(" %s %s %s\n",
+		theme.LabelStyle.Render(fmt.Sprintf("%-18s", "🗓️  Busiest:")),
 		theme.ValueStyle.Render(bestDay.String()[:3]),
-		theme.ValueStyle.Render(fmt.Sprintf("%d:00", bestHour)))
-	lines += fmt.Sprintf("  🔥 Streak:          %s days\n", theme.ValueStyle.Render(fmt.Sprintf("%d", streak)))
-	lines += fmt.Sprintf("  🗯️  Avg Message:     %s chars\n", theme.ValueStyle.Render(fmt.Sprintf("%d", avgMsg)))
+		theme.SubtleStyle.Render(fmt.Sprintf("at %d:00", bestHour)))
+	
+	lines += fmt.Sprintf(" %s %s\n", 
+		theme.LabelStyle.Render(fmt.Sprintf("%-18s", "🔥 Streak:")), 
+		theme.ValueStyle.Render(fmt.Sprintf("%d days", streak)))
+	
+	lines += fmt.Sprintf(" %s %s\n\n", 
+		theme.LabelStyle.Render(fmt.Sprintf("%-18s", "🗯️  Avg Message:")), 
+		theme.ValueStyle.Render(fmt.Sprintf("%d chars", avgMsg)))
 
 	if emojiCount > 0 {
-		lines += fmt.Sprintf("  👑 Top Emoji:       %s x%d\n", topEmoji, emojiCount)
+		lines += fmt.Sprintf(" %s %s %s\n", 
+			theme.LabelStyle.Render(fmt.Sprintf("%-18s", "👑 Top Emoji:")), 
+			topEmoji, theme.SubtleStyle.Render(fmt.Sprintf("x%d", emojiCount)))
 	} else {
-		lines += fmt.Sprintf("  👑 Top Emoji:       %s\n", theme.SubtleStyle.Render("No emojis found"))
+		lines += fmt.Sprintf(" %s %s\n", theme.LabelStyle.Render(fmt.Sprintf("%-18s", "👑 Top Emoji:")), theme.SubtleStyle.Render("No emojis found"))
 	}
 
 	if caffeineActive {
-		lines += fmt.Sprintf("  ☕ Caffeine Mode:   %s\n",
-			theme.ValueStyle.Render(fmt.Sprintf("ON! %d commits in 1hr", caffeineBurst)))
+		lines += fmt.Sprintf(" %s %s\n",
+			theme.LabelStyle.Render(fmt.Sprintf("%-18s", "☕ Caffeine Mode:")),
+			theme.ValueStyle.Render(fmt.Sprintf("ON! %d commits in 1h", caffeineBurst)))
 	} else {
-		lines += fmt.Sprintf("  ☕ Caffeine Mode:   %s\n", theme.SubtleStyle.Render("off"))
+		lines += fmt.Sprintf(" %s %s\n", theme.LabelStyle.Render(fmt.Sprintf("%-18s", "☕ Caffeine Mode:")), theme.SubtleStyle.Render("off"))
 	}
 
 	_ = time.Now // ensure time import is used

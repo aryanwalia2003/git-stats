@@ -21,19 +21,21 @@ func renderTimelinePanel(m Model) string {
 
 	for i, ev := range events {
 		// Event Header: "🌱 The Genesis (2024-03-04)"
-		header := fmt.Sprintf("  %s %s %s",
-			ev.Emoji,
-			theme.ValueStyle.Render(ev.Title),
-			theme.SubtleStyle.Render("("+ev.Date+")"))
+		// Emojis vary in width, so we format them + pad to ensure stable alignment
+		emojiSpace := fmt.Sprintf("%s ", ev.Emoji) 
+		header := fmt.Sprintf(" %s %s %s",
+			emojiSpace,
+			theme.LabelStyle.Render(ev.Title),     // Neutral title
+			theme.SubtleStyle.Render("("+ev.Date+")")) // Dim date
 
 		// Connection line unless it's the last item
-		connector := "    │"
+		connector := "   │"
 		if i == len(events)-1 {
 			connector = ""
 		}
 
 		// Event Description
-		desc := fmt.Sprintf("    %s", theme.LabelStyle.Render(ev.Description))
+		desc := fmt.Sprintf("   %s", theme.ValueStyle.Render(ev.Description))
 
 		sb.WriteString(header + "\n" + desc + "\n" + theme.SubtleStyle.Render(connector) + "\n")
 	}
