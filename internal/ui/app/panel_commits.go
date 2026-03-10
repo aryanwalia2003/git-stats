@@ -31,5 +31,5 @@ func renderCommitsPanel(m Model) string {
 		body += line + "\n"
 	}
 
-	return theme.PanelStyle.Render(title + "\n" + body)
+	return title + "\n" + body
 }

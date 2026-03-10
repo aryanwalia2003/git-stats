@@ -15,7 +15,7 @@ func renderActivityPanel(m Model) string {
 	blocks := computeMonthlyBlocks(m.History, 6)
 
 	if len(blocks) == 0 {
-		return theme.FullWidthPanelStyle.Render(title + "\n  No commits found")
+		return title + "\n  No commits found"
 	}
 
 	calendar := renderMonthBlocks(blocks)
@@ -28,5 +28,5 @@ func renderActivityPanel(m Model) string {
 		lipgloss.NewStyle().Foreground(theme.CalendarColors[4]).Render("■"))
 
 	body := fmt.Sprintf("\n%s\n%s", calendar, legend)
-	return theme.FullWidthPanelStyle.Render(title + body)
+	return title + body
 }

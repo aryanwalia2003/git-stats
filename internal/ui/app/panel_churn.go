@@ -27,5 +27,5 @@ func renderChurnPanel(m Model) string {
 	body += fmt.Sprintf("  🐭 Smallest Commit:\n  %s\n\n", formatCommitDrilldown(stats.SmallestCommit, stats.SmallestCommit.Value+stats.SmallestCommit.Value2, "lines"))
 	body += fmt.Sprintf("  🔧 Big Refactor:\n  %s\n", formatCommitDrilldown(stats.BiggestRefactor, stats.BiggestRefactor.Value2, "lines deleted"))
 
-	return theme.PanelStyle.Render(title + "\n" + body)
+	return title + "\n" + body
 }

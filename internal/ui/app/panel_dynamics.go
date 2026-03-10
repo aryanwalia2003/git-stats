@@ -17,7 +17,7 @@ func renderDynamicsPanel(m Model) string {
 	lifecycles := computeLifecycles(m.History)
 	if len(lifecycles) == 0 {
 		body.WriteString(theme.SubtleStyle.Render("  No contributor data found."))
-		return theme.PanelStyle.Render(title + "\n" + body.String())
+		return title + "\n" + body.String()
 	}
 
 	for _, lc := range lifecycles {
@@ -32,5 +32,5 @@ func renderDynamicsPanel(m Model) string {
 		body.WriteString(fmt.Sprintf("  %s %s\n    └─ %s\n", name, status, joined))
 	}
 
-	return theme.PanelStyle.Render(title + "\n" + body.String())
+	return title + "\n" + body.String()
 }

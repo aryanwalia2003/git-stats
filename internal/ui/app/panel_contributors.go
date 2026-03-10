@@ -19,5 +19,5 @@ func renderContributorsPanel(m Model) string {
 	}
 
 	chart := renderBarChart(labels, values, 20) // max 20 chars wide
-	return theme.PanelStyle.Render(title + "\n" + chart)
+	return title + "\n" + chart
 }

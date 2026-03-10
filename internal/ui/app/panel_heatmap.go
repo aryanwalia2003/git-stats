@@ -16,7 +16,7 @@ func renderHourHeatmap(m Model) string {
 	// Hour labels: 0  3  6  9  12 15 18 21
 	labels := "  " + theme.SubtleStyle.Render("0  3  6  9  12 15 18 21")
 
-	return theme.PanelStyle.Render(title + "\n  " + spark + "\n" + labels)
+	return title + "\n  " + spark + "\n" + labels
 }
 
 // renderDayOfWeekChart shows commits per weekday as a bar chart.
@@ -33,5 +33,5 @@ func renderDayOfWeekChart(m Model) string {
 			renderSparkline([]int{histogram[i]}))
 	}
 
-	return theme.PanelStyle.Render(title + "\n" + chart)
+	return title + "\n" + chart
 }

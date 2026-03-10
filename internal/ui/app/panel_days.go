@@ -9,7 +9,7 @@ func renderDaysPanel(m Model) string {
 	title := theme.PanelTitleStyle.Render("📅 Day Distribution")
 
 	if len(m.History) == 0 {
-		return theme.PanelStyle.Render(title + "\n  No commits found")
+		return title + "\n  No commits found"
 	}
 
 	// We calculate days across the entire parsed history
@@ -27,5 +27,5 @@ func renderDaysPanel(m Model) string {
 	chart := renderBarChart(labels, days, 20)
 
 	body := "\n" + chart
-	return theme.PanelStyle.Render(title + body)
+	return title + body
 }

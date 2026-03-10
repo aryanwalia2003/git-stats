@@ -13,7 +13,7 @@ func renderTimelinePanel(m Model) string {
 
 	events := computeTimeline(m.History)
 	if len(events) == 0 {
-		return theme.PanelStyle.Render(title + "\n  No timeline events yet.")
+		return title + "\n  No timeline events yet."
 	}
 
 	var sb strings.Builder
@@ -38,5 +38,5 @@ func renderTimelinePanel(m Model) string {
 		sb.WriteString(header + "\n" + desc + "\n" + theme.SubtleStyle.Render(connector) + "\n")
 	}
 
-	return theme.PanelStyle.Render(title + sb.String())
+	return title + sb.String()
 }

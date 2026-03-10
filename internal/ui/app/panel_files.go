@@ -11,7 +11,7 @@ func renderFilesPanel(m Model) string {
 	title := theme.PanelTitleStyle.Render("📁 File Hotspots")
 
 	if len(m.Files) == 0 {
-		return theme.PanelStyle.Render(title + "\n  No files tracked")
+		return title + "\n  No files tracked"
 	}
 
 	// Get top 3 most edited files
@@ -39,5 +39,5 @@ func renderFilesPanel(m Model) string {
 		theme.ValueStyle.Render("  🔥 Heaviest Modification"), most,
 		theme.ValueStyle.Render("  🧊 Barely Touched"), least)
 
-	return theme.PanelStyle.Render(title + body)
+	return title + body
 }

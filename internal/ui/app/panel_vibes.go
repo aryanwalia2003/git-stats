@@ -42,5 +42,5 @@ func renderVibesPanel(m Model) string {
 	}
 
 	_ = time.Now // ensure time import is used
-	return theme.PanelStyle.Render(title + "\n" + lines)
+	return title + "\n" + lines
 }
